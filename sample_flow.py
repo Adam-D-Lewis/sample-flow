@@ -31,8 +31,50 @@ with Flow("test-flow") as flow:
     adds = add.map(x=incs, y=decs)
     total = list_sum(adds)
 
-with open('dask-worker-spec.yml') as f:
-    worker_config = yaml.load(f, Loader=yaml.FullLoader)
+worker_config = {
+    "kind": "Pod",
+    "metadata": {
+        "labels": {
+            "foo": "bar"
+        }
+    },
+    "spec": {
+        "containers": [
+            {
+                "args": [
+                    "dask-worker",
+                    "--nthreads",
+                    "1",
+                    "--no-dashboard",
+                    "--memory-limit",
+                    "1GB",
+                    "--death-timeout",
+                    "60"
+                ],
+                "env": [
+                    {
+                        "name": "EXTRA_PIP_PACKAGES",
+                        "value": "distributed==2021.3.0"
+                    }
+                ],
+                "image": "daskdev/dask:latest",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "dask",
+                "resources": {
+                    "limits": {
+                        "cpu": "1",
+                        "memory": "1G"
+                    },
+                    "requests": {
+                        "cpu": "1",
+                        "memory": "1G"
+                    }
+                }
+            }
+        ],
+        "restartPolicy": "Never"
+    }
+}
 
 flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
                                 cluster_kwargs={'pod_template': worker_config},
