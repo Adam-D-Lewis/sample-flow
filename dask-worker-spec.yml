@@ -1,0 +1,24 @@
+# worker-spec.yml
+
+kind: Pod
+metadata:
+  labels:
+    foo: bar
+spec:
+  restartPolicy: Never
+  containers:
+  - image: daskdev/dask:latest
+    imagePullPolicy: IfNotPresent
+    args: [dask-worker, --nthreads, '1', --no-dashboard, --memory-limit, 1GB, --death-timeout, '60']
+    name: dask
+    env:
+      - name: EXTRA_PIP_PACKAGES
+        value: distributed==2021.3.0
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1G
+      requests:
+        cpu: "1"
+        memory: 1G
+
