@@ -33,6 +33,8 @@ with Flow("test-flow") as flow:
     decs = dec.map(x=range(100))
     adds = add.map(x=incs, y=decs)
     total = list_sum(adds)
+
+if __name__=="__main__":
     flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
                                   cluster_kwargs={'pod_template': worker_config},
                                   adapt_kwargs={'minimum':2, 'maximum': 3}
@@ -40,6 +42,4 @@ with Flow("test-flow") as flow:
     flow.storage = GitHub(
         repo="adam-d-lewis/sample-flow", path="sample_flow.py"
     )
-
-if __name__=="__main__":
     flow.register('Test Project', labels=[])  
