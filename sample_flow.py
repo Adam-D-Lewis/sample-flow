@@ -31,15 +31,16 @@ with Flow("test-flow") as flow:
     adds = add.map(x=incs, y=decs)
     total = list_sum(adds)
 
-if __name__=="__main__":
-    with open('dask-worker-spec.yml') as f:
-        worker_config = yaml.load(f, Loader=yaml.FullLoader)
+with open('dask-worker-spec.yml') as f:
+    worker_config = yaml.load(f, Loader=yaml.FullLoader)
 
-    flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
-                                  cluster_kwargs={'pod_template': worker_config},
-                                  adapt_kwargs={'minimum':2, 'maximum': 3}
-                                )
-    flow.storage = GitHub(
-        repo="adam-d-lewis/sample-flow", path="sample_flow.py"
-    )
+flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
+                                cluster_kwargs={'pod_template': worker_config},
+                                adapt_kwargs={'minimum':2, 'maximum': 3}
+                            )
+flow.storage = GitHub(
+    repo="adam-d-lewis/sample-flow", path="sample_flow.py"
+)
+
+if __name__=="__main__":
     flow.register('Test Project', labels=[])  
