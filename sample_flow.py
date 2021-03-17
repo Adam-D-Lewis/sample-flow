@@ -25,9 +25,6 @@ def add(x, y):
 def list_sum(arr):
     return sum(arr)
 
-with open('dask-worker-spec.yml') as f:
-    worker_config = yaml.load(f, Loader=yaml.FullLoader)
-
 with Flow("test-flow") as flow:
     incs = inc.map(x=range(100))
     decs = dec.map(x=range(100))
@@ -35,6 +32,9 @@ with Flow("test-flow") as flow:
     total = list_sum(adds)
 
 if __name__=="__main__":
+    with open('dask-worker-spec.yml') as f:
+        worker_config = yaml.load(f, Loader=yaml.FullLoader)
+
     flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
                                   cluster_kwargs={'pod_template': worker_config},
                                   adapt_kwargs={'minimum':2, 'maximum': 3}
