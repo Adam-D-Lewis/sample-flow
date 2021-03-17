@@ -75,7 +75,8 @@ worker_config = {
         "restartPolicy": "Never"
     }
 }
-
+import subprocess
+subprocess.run(['pip', 'install', 'dask-kubernetes==2021.3.0'])
 flow.executor = DaskExecutor(cluster_class='dask_kubernetes.KubeCluster', 
                                 cluster_kwargs={'pod_template': worker_config},
                                 adapt_kwargs={'minimum':2, 'maximum': 3}
